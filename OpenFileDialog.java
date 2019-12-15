@@ -1,4 +1,4 @@
-package edu.android.openfiledialog;
+package com.example.keytools;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -25,7 +25,7 @@ import java.util.*;
  */
 public class OpenFileDialog extends AlertDialog.Builder {
 
-    private String currentPath = Environment.getExternalStorageDirectory().getPath();
+    private static String currentPath = null; //Environment.getExternalStorageDirectory().getPath();
     private List<File> files = new ArrayList<File>();
     private TextView title;
     private ListView listView;
@@ -80,6 +80,9 @@ public class OpenFileDialog extends AlertDialog.Builder {
 
     public OpenFileDialog(Context context) {
         super(context);
+        if(currentPath == null) {
+            currentPath = context.getExternalFilesDir(null).getPath();//Environment.getExternalStorageDirectory().getPath();
+        }
         isOnlyFoldersFilter = false;
         title = createTitle(context);
         changeTitle();
@@ -214,7 +217,7 @@ public class OpenFileDialog extends AlertDialog.Builder {
             public void onClick(View view) {
                 File file = new File(currentPath);
                 File parentDirectory = file.getParentFile();
-                if (parentDirectory != null) {
+                if (parentDirectory != null  && parentDirectory.canRead()) {
                     currentPath = parentDirectory.getPath();
                     RebuildFiles(((FileAdapter) listView.getAdapter()));
                 }
